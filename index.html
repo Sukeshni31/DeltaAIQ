@@ -142,6 +142,12 @@
       font-size: 18px;
     }
 
+    h3 {
+      margin-top: 0;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
     label {
       font-weight: 500;
       display: block;
@@ -167,10 +173,6 @@
     .muted {
       color: var(--text-muted);
       font-size: 13px;
-    }
-
-    .result {
-      margin-top: 16px;
     }
 
     .score-main {
@@ -246,48 +248,11 @@
       scroll-margin-top: 80px;
     }
 
-    /* Autocomplete styles */
-    .autocomplete-wrapper {
-      position: relative;
-    }
-
-    #autocomplete-list {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #ffffff;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-      max-height: 220px;
-      overflow-y: auto;
-      z-index: 1000;
-      display: none;
-    }
-
-    .autocomplete-item {
-      padding: 8px 10px;
-      cursor: pointer;
-      border-bottom: 1px solid #f3f4f6;
+    ul.insights-list {
+      padding-left: 18px;
+      margin: 6px 0 0 0;
       font-size: 13px;
-    }
-
-    .autocomplete-item:last-child {
-      border-bottom: none;
-    }
-
-    .autocomplete-item:hover {
-      background: #eff6ff;
-    }
-
-    .autocomplete-name {
-      font-weight: 500;
-    }
-
-    .autocomplete-domain {
-      font-size: 11px;
-      color: var(--text-muted);
+      color: #374151;
     }
   </style>
 </head>
@@ -314,8 +279,9 @@
           <li>Self-assessed AIQ score out of 100</li>
           <li>Benchmark by industry and a gap view</li>
           <li>Preview of external AIQ and blended DeltaAIQ</li>
+          <li>Context bullets on how your industry has moved in the last 3 years</li>
         </ul>
-        <div class="beta-tag">External AIQ is shown as a placeholder in this build. In the full product it will use hiring, tech stack and public AI narrative signals.</div>
+        <div class="beta-tag">External AIQ and industry insights are simplified in this build. In the full product they will use live signals such as hiring, tech stack and public AI narrative.</div>
       </div>
     </section>
 
@@ -325,10 +291,7 @@
         <p class="muted">These inputs help us anchor your AIQ score against the right peer group.</p>
 
         <label for="companyName">Company name</label>
-        <div class="autocomplete-wrapper">
-          <input type="text" id="companyName" placeholder="Type company name…" autocomplete="off">
-          <div id="autocomplete-list"></div>
-        </div>
+        <input type="text" id="companyName" placeholder="Type company name…" autocomplete="off">
 
         <label for="industry">Industry</label>
         <select id="industry">
@@ -436,7 +399,7 @@
           <div class="kpi">
             <div class="kpi-label">External AIQ (signals preview)</div>
             <div class="kpi-value" id="externalAiq"></div>
-            <div class="beta-tag">In this demo, this is a placeholder. In the full product it is derived from hiring, tech stack and public AI narrative.</div>
+            <div class="beta-tag">In this demo, this is a simplified estimate. In the full product it is derived from hiring, tech stack and public AI narrative.</div>
           </div>
           <div class="kpi">
             <div class="kpi-label">Blended DeltaAIQ</div>
@@ -458,6 +421,13 @@
             <p id="deltaText"></p>
           </div>
         </div>
+
+        <hr>
+
+        <h3>Context and insights</h3>
+        <p class="muted">These bullets summarise how your industry has moved in the last three years and where competitors have typically invested in AI.</p>
+        <ul id="insightsList" class="insights-list"></ul>
+
         <hr>
         <p id="recommendation"></p>
       </div>
@@ -511,84 +481,4 @@
     function getExternalAiqPlaceholder(industry, selfAiq) {
       const base = benchmarks[industry] || 50;
       let external = Math.round((base * 0.7) + (selfAiq * 0.3));
-      if (external < 40) external = 40;
-      if (external > 85) external = 85;
-      return external;
-    }
-
-    document.getElementById("calcBtn").addEventListener("click", function () {
-      const industry = document.getElementById("industry").value;
-      const qIds = ["q1","q2","q3","q4","q5","q6","q7"];
-      let total = 0;
-      for (const id of qIds) {
-        const val = document.getElementById(id).value;
-        if (val === "") {
-          alert("Please answer all questions before calculating.");
-          return;
-        }
-        total += parseInt(val, 10);
-      }
-
-      if (!industry) {
-        alert("Please select an industry.");
-        return;
-      }
-
-      const maxScore = 7 * 5;
-      const aiq = Math.round((total / maxScore) * 100);
-      const band = getBand(aiq);
-      const benchmark = benchmarks[industry] || 50;
-      const delta = aiq - benchmark;
-
-      const externalAiq = getExternalAiqPlaceholder(industry, aiq);
-      const blendedAiq = Math.round((0.6 * aiq) + (0.4 * externalAiq));
-
-      const aiqScoreEl = document.getElementById("aiqScore");
-      const aiqBandEl = document.getElementById("aiqBand");
-      const benchmarkTextEl = document.getElementById("benchmarkText");
-      const deltaTextEl = document.getElementById("deltaText");
-      const summaryTextEl = document.getElementById("summaryText");
-      const recommendationEl = document.getElementById("recommendation");
-      const resultCardEl = document.getElementById("resultCard");
-
-      const selfAiqEl = document.getElementById("selfAiq");
-      const externalAiqEl = document.getElementById("externalAiq");
-      const blendedAiqEl = document.getElementById("blendedAiq");
-
-      selfAiqEl.textContent = aiq + " / 100";
-      externalAiqEl.textContent = externalAiq + " / 100";
-      blendedAiqEl.textContent = blendedAiq + " / 100";
-
-      aiqScoreEl.textContent = "Blended DeltaAIQ: " + blendedAiq + " / 100";
-      aiqBandEl.textContent = band;
-
-      benchmarkTextEl.textContent = "Typical AIQ in " + industry + ": " + benchmark + " / 100";
-
-      if (delta > 0) {
-        deltaTextEl.textContent = "Your self-assessed AIQ is " + delta + " points above the typical organisation in your industry.";
-      } else if (delta < 0) {
-        deltaTextEl.textContent = "Your self-assessed AIQ is " + Math.abs(delta) + " points below the typical organisation in your industry.";
-      } else {
-        deltaTextEl.textContent = "Your self-assessed AIQ is in line with the typical organisation in your industry.";
-      }
-
-      summaryTextEl.textContent = getBandSummary(band);
-      recommendationEl.textContent = buildRecommendation(aiq, delta);
-
-      resultCardEl.style.display = "block";
-      resultCardEl.scrollIntoView({ behavior: "smooth" });
-    });
-
-    document.getElementById("startAssessmentBtn").addEventListener("click", function () {
-      const section = document.getElementById("assessmentSection");
-      section.scrollIntoView({ behavior: "smooth" });
-    });
-
-    // === Universal company autocomplete using Clearbit ===
-    const companyInput = document.getElementById("companyName");
-    const autocompleteDiv = document.getElementById("autocomplete-list");
-
-    document.addEventListener("click", function (e) {
-      if (!autocompleteDiv.contains(e.target) && e.target !== companyInput) {
-        autocompleteDiv.style.display = "none";
-      }
+      if (external < 40
