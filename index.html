@@ -108,6 +108,45 @@
     hr { border: none; border-top: 1px solid #e5e7eb; margin: 14px 0; }
     ul.insights-list { margin: 6px 0 0 0; padding-left: 18px; font-size: 13px; color: #374151; }
     .section-anchor { scroll-margin-top: 80px; }
+
+    /* Autocomplete */
+    .autocomplete-wrapper {
+      position: relative;
+    }
+    .autocomplete-list {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      margin-top: 2px;
+      background: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+    .autocomplete-item {
+      padding: 6px 10px;
+      border-bottom: 1px solid #f3f4f6;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+    .autocomplete-item:hover {
+      background: #eff6ff;
+    }
+    .autocomplete-name {
+      font-weight: 500;
+    }
+    .autocomplete-domain {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -131,8 +170,11 @@
         <h2>Organisation details</h2>
         <p class="muted">These inputs help us anchor your AIQ score against the right peer group.</p>
 
-        <label for="companyName">Company name</label>
-        <input type="text" id="companyName" placeholder="Type company name…" autocomplete="off">
+        <div class="autocomplete-wrapper">
+          <label for="companyName">Company name</label>
+          <input type="text" id="companyName" placeholder="Type company name…" autocomplete="off">
+          <div id="companyDropdown" class="autocomplete-list"></div>
+        </div>
 
         <label for="industry">Industry</label>
         <select id="industry">
@@ -425,6 +467,78 @@
 
     document.getElementById("startAssessmentBtn").addEventListener("click", function () {
       document.getElementById("assessmentSection").scrollIntoView({ behavior: "smooth" });
+    });
+
+    // === Real-time company suggestions (using Clearbit autocomplete) ===
+    const companyInput = document.getElementById("companyName");
+    const companyDropdown = document.getElementById("companyDropdown");
+    let companyTimer = null;
+
+    async function fetchCompanySuggestions(query) {
+      const url = "https://autocomplete.clearbit.com/v1/companies/suggest?query=" + encodeURIComponent(query);
+      try {
+        const res = await fetch(url);
+        if (!res.ok) {
+          companyDropdown.style.display = "none";
+          return;
+        }
+        const data = await res.json();
+        renderCompanyDropdown(data || []);
+      } catch (e) {
+        console.error("Company autocomplete error:", e);
+        companyDropdown.style.display = "none";
+      }
+    }
+
+    function renderCompanyDropdown(companies) {
+      companyDropdown.innerHTML = "";
+      if (!companies.length) {
+        companyDropdown.style.display = "none";
+        return;
+      }
+      companies.forEach(c => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+
+        const nameDiv = document.createElement("div");
+        nameDiv.className = "autocomplete-name";
+        nameDiv.textContent = c.name || "";
+
+        const domainDiv = document.createElement("div");
+        domainDiv.className = "autocomplete-domain";
+        domainDiv.textContent = c.domain || "";
+
+        item.appendChild(nameDiv);
+        item.appendChild(domainDiv);
+
+        item.addEventListener("click", () => {
+          companyInput.value = c.name || "";
+          companyDropdown.style.display = "none";
+        });
+
+        companyDropdown.appendChild(item);
+      });
+      companyDropdown.style.display = "block";
+    }
+
+    companyInput.addEventListener("input", () => {
+      const q = companyInput.value.trim();
+      if (companyTimer) clearTimeout(companyTimer);
+
+      if (q.length < 2) {
+        companyDropdown.style.display = "none";
+        return;
+      }
+
+      companyTimer = setTimeout(() => {
+        fetchCompanySuggestions(q);
+      }, 300);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!companyDropdown.contains(e.target) && e.target !== companyInput) {
+        companyDropdown.style.display = "none";
+      }
     });
   </script>
 </body>
