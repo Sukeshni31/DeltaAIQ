@@ -7,15 +7,10 @@
     :root {
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
-      --bg-soft: #f3f4f6;
       --border-soft: #e5e7eb;
       --text-muted: #6b7280;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
@@ -24,240 +19,98 @@
       color: #111827;
       line-height: 1.5;
     }
-
-    .page {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 24px 16px 40px 16px;
-    }
-
+    .page { max-width: 960px; margin: 0 auto; padding: 24px 16px 40px; }
     header {
-      padding: 16px 0 8px 0;
+      padding: 8px 0 12px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
     }
-
-    .logo {
-      font-weight: 700;
-      font-size: 20px;
-      letter-spacing: 0.03em;
-    }
-
-    .logo span {
-      color: var(--primary);
-    }
-
+    .logo { font-weight: 700; font-size: 20px; letter-spacing: 0.03em; }
+    .logo span { color: var(--primary); }
     .pill {
       padding: 4px 10px;
       border-radius: 999px;
-      font-size: 11px;
       border: 1px solid #d1d5db;
+      font-size: 11px;
       color: var(--text-muted);
     }
-
     .hero {
-      margin-top: 12px;
-      padding: 24px 20px;
-      border-radius: 16px;
-      background: radial-gradient(circle at top left, #e0ecff 0, #ffffff 50%);
-      border: 1px solid var(--border-soft);
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-      gap: 20px;
-      align-items: center;
-    }
-
-    @media (max-width: 800px) {
-      .hero {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .hero h1 {
-      margin: 0 0 8px 0;
-      font-size: 28px;
-    }
-
-    .hero p {
-      margin: 0 0 12px 0;
-      color: var(--text-muted);
-    }
-
-    .hero-cta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
       margin-top: 8px;
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      background: radial-gradient(circle at top left, #e0ecff 0, #ffffff 55%);
     }
-
+    .hero h1 { margin: 0 0 6px; font-size: 26px; }
+    .hero p { margin: 0 0 10px; color: var(--text-muted); }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     button.primary {
-      padding: 10px 18px;
-      font-size: 15px;
+      padding: 9px 18px;
       border-radius: 999px;
       border: none;
-      cursor: pointer;
       background: var(--primary);
-      color: white;
+      color: #fff;
       font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
     }
-
-    button.primary:hover {
-      background: var(--primary-dark);
-    }
-
-    .hero-note {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .hero-card {
-      border-radius: 14px;
-      border: 1px solid #dbeafe;
-      background: #eff6ff;
-      padding: 14px;
-      font-size: 13px;
-    }
-
-    .hero-card-title {
-      font-weight: 600;
-      margin-bottom: 4px;
-      font-size: 13px;
-      color: #1d4ed8;
-    }
-
+    button.primary:hover { background: var(--primary-dark); }
+    .hero-note { font-size: 12px; color: var(--text-muted); }
     .card {
       border: 1px solid var(--border-soft);
       border-radius: 14px;
-      padding: 20px 18px;
-      margin-top: 20px;
-      background: #ffffff;
+      padding: 18px;
+      margin-top: 18px;
+      background: #fff;
       box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
-
-    h2 {
-      margin-top: 0;
-      margin-bottom: 6px;
-      font-size: 18px;
+    h2 { margin: 0 0 6px; font-size: 18px; }
+    h3 { margin: 0 0 6px; font-size: 15px; }
+    label { display: block; margin-bottom: 4px; font-size: 14px; font-weight: 500; }
+    input[type="text"], select {
+      width: 100%; padding: 7px 8px; margin-bottom: 10px;
+      border-radius: 6px; border: 1px solid #d1d5db; font-size: 14px;
     }
-
-    h3 {
-      margin-top: 0;
-      margin-bottom: 6px;
-      font-size: 15px;
+    input[type="text"]:focus, select:focus {
+      outline: none; border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.2);
     }
-
-    label {
-      font-weight: 500;
-      display: block;
-      margin-bottom: 4px;
-      font-size: 14px;
+    .muted { color: var(--text-muted); font-size: 13px; }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
     }
-
-    select, input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 12px;
-      border-radius: 6px;
-      border: 1px solid #d1d5db;
-      font-size: 14px;
-    }
-
-    select:focus, input[type="text"]:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
-    }
-
-    .muted {
-      color: var(--text-muted);
+    .kpi {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 9px 10px;
+      background: #f9fafb;
       font-size: 13px;
     }
-
-    .score-main {
-      font-size: 26px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
+    .kpi-label { font-size: 12px; color: var(--text-muted); }
+    .kpi-value { font-size: 16px; font-weight: 600; }
+    .score-main { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
     .tag {
       display: inline-block;
-      padding: 4px 10px;
+      padding: 3px 9px;
       border-radius: 999px;
       font-size: 12px;
       border: 1px solid #cbd5f5;
       background: #eff4ff;
       color: #1d4ed8;
-      margin-left: 8px;
+      margin-left: 6px;
     }
-
-    .flex-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-      margin-top: 8px;
-    }
-
-    .flex-item {
-      flex: 1 1 220px;
-      min-width: 0;
-    }
-
-    hr {
-      border: none;
-      border-top: 1px solid #e5e7eb;
-      margin: 16px 0;
-    }
-
-    small {
-      color: var(--text-muted);
-    }
-
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-top: 8px;
-    }
-
-    .kpi {
-      border-radius: 10px;
-      border: 1px solid #e5e7eb;
-      padding: 10px 12px;
-      background: #f9fafb;
-      font-size: 13px;
-    }
-
-    .kpi-label {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .kpi-value {
-      font-weight: 600;
-      font-size: 16px;
-    }
-
-    .beta-tag {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .section-anchor {
-      scroll-margin-top: 80px;
-    }
-
-    ul.insights-list {
-      padding-left: 18px;
-      margin: 6px 0 0 0;
-      font-size: 13px;
-      color: #374151;
-    }
+    .flex-row { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 10px; }
+    .flex-item { flex: 1 1 220px; min-width: 0; }
+    hr { border: none; border-top: 1px solid #e5e7eb; margin: 14px 0; }
+    ul.insights-list { margin: 6px 0 0 0; padding-left: 18px; font-size: 13px; color: #374151; }
+    .section-anchor { scroll-margin-top: 80px; }
   </style>
 </head>
 <body>
-
   <div class="page">
     <header>
       <div class="logo">Delta<span>AIQ</span></div>
@@ -265,23 +118,11 @@
     </header>
 
     <section class="hero">
-      <div>
-        <h1>Know your organisation’s AI Quotient</h1>
-        <p>DeltaAIQ gives you a quick, structured view of how AI ready your organisation is across strategy, people, data, technology and governance, and how you compare to peers.</p>
-        <div class="hero-cta">
-          <button class="primary" id="startAssessmentBtn">Start assessment</button>
-          <span class="hero-note">Takes under three minutes. No signup required for this demo.</span>
-        </div>
-      </div>
-      <div class="hero-card">
-        <div class="hero-card-title">What you get in this version</div>
-        <ul style="margin: 0 0 4px 18px; padding: 0; color: var(--text-muted);">
-          <li>Self-assessed AIQ score out of 100</li>
-          <li>Benchmark by industry and a gap view</li>
-          <li>Preview of external AIQ and blended DeltaAIQ</li>
-          <li>Context bullets on how your industry has moved in the last 3 years</li>
-        </ul>
-        <div class="beta-tag">External AIQ and industry insights are simplified in this build. In the full product they will use live signals such as hiring, tech stack and public AI narrative.</div>
+      <h1>Know your organisation’s AI Quotient</h1>
+      <p>DeltaAIQ gives you a quick, structured view of how AI ready your organisation is across strategy, people, data, technology and governance, and how you compare to peers.</p>
+      <div class="hero-cta">
+        <button class="primary" id="startAssessmentBtn">Start assessment</button>
+        <span class="hero-note">Takes under three minutes. No signup required for this demo.</span>
       </div>
     </section>
 
@@ -389,7 +230,7 @@
         <button class="primary" id="calcBtn">Calculate DeltaAIQ</button>
       </div>
 
-      <div class="card" id="resultCard" style="display: none;">
+      <div class="card" id="resultCard" style="display:none;">
         <h2>Your DeltaAIQ result</h2>
         <div class="kpi-grid">
           <div class="kpi">
@@ -399,7 +240,7 @@
           <div class="kpi">
             <div class="kpi-label">External AIQ (signals preview)</div>
             <div class="kpi-value" id="externalAiq"></div>
-            <div class="beta-tag">In this demo, this is a simplified estimate. In the full product it is derived from hiring, tech stack and public AI narrative.</div>
+            <div class="muted" style="font-size:11px;">In this demo, this is an estimated range. In the full product it is based on hiring, tech stack and public AI narrative.</div>
           </div>
           <div class="kpi">
             <div class="kpi-label">Blended DeltaAIQ</div>
@@ -425,7 +266,7 @@
         <hr>
 
         <h3>Context and insights</h3>
-        <p class="muted">These bullets summarise how your industry has moved in the last three years and where competitors have typically invested in AI.</p>
+        <p class="muted">High-level AI and technology moves in your space over the last three years.</p>
         <ul id="insightsList" class="insights-list"></ul>
 
         <hr>
@@ -442,6 +283,39 @@
       "Manufacturing": 45,
       "Aviation": 55,
       "Pharma / Healthcare": 50
+    };
+
+    const insightsByIndustry = {
+      "IT Services": [
+        "Large IT firms have built dedicated AI and GenAI practices, often packaged as platforms or accelerators for clients.",
+        "Clients now expect AI to be embedded in proposals – from automation of L1/L2 work to copilots for developers and service desks.",
+        "Competitors have set up AI centres of excellence, invested in cloud-native data platforms and partnered closely with hyperscalers."
+      ],
+      "GCC / Captive": [
+        "Global capability centres have rapidly expanded advanced analytics and AI hubs, especially in India and Eastern Europe.",
+        "Many GCCs are moving beyond shared services into product, platform and data engineering work for the global enterprise.",
+        "AI is being used for risk, compliance, customer analytics and productivity gains – often with strong governance and security controls."
+      ],
+      "SaaS / Product": [
+        "Product companies have added AI and GenAI features as core differentiators – copilots, recommendations and automation inside the product.",
+        "There is intense competition on time-to-value – faster onboarding, self-serve analytics and AI-driven insights in the UI.",
+        "Pricing and packaging have shifted, with AI features sometimes offered as premium add-ons or separate SKUs."
+      ],
+      "Manufacturing": [
+        "Industry 4.0 initiatives have matured, with AI applied in predictive maintenance, quality inspection and energy optimisation.",
+        "Sensor data and IoT platforms are more common, but many plants still operate with mixed levels of connectivity and data quality.",
+        "Competitors are piloting computer vision, digital twins and scheduling optimisation to reduce downtime and scrap."
+      ],
+      "Aviation": [
+        "Airlines and MROs have invested in predictive maintenance, fleet health monitoring and turnaround time optimisation using AI.",
+        "Passenger experience is being improved with demand forecasting, personalised offers and disruption management tools.",
+        "Regulatory and safety requirements mean AI adoption is more controlled, but digital programmes are a clear strategic priority."
+      ],
+      "Pharma / Healthcare": [
+        "Pharma and health players have expanded AI in drug discovery, trial design, pharmacovigilance and real-world evidence analysis.",
+        "Hospitals and providers are using AI for triage, imaging support and administrative automation, with strong privacy constraints.",
+        "Competitors are partnering with health-tech and data platforms to combine clinical data, claims data and real-world signals."
+      ]
     };
 
     function getBand(aiq) {
@@ -466,19 +340,92 @@
 
     function buildRecommendation(aiq, delta) {
       if (aiq >= 75 && delta >= 0) {
-        return "You are ahead of or in line with peers. Focus on scaling successful AI use cases, formalising governance, and linking AI outcomes to business metrics.";
+        return "You are ahead of or in line with peers. Focus on scaling successful AI use cases, formalising governance and linking AI outcomes to business metrics.";
       }
       if (aiq >= 55 && delta < 0) {
         return "You are on the right path, but slightly behind peers. Clarify accountability for AI, invest in upskilling, and prioritise two or three high-impact AI use cases.";
       }
       if (aiq < 55 && delta < 0) {
-        return "You appear behind peers in AI maturity. Start with a clear AI roadmap, data readiness assessment, and one flagship pilot to demonstrate value.";
+        return "You appear behind peers in AI maturity. Start with a clear AI roadmap, data readiness assessment and one flagship pilot to demonstrate value.";
       }
       return "You have a reasonable AI foundation. Use this baseline to align leadership, choose a focused roadmap, and track AIQ every 6–12 months.";
     }
 
-    // External AIQ placeholder builder.
     function getExternalAiqPlaceholder(industry, selfAiq) {
       const base = benchmarks[industry] || 50;
       let external = Math.round((base * 0.7) + (selfAiq * 0.3));
-      if (external < 40
+      if (external < 40) external = 40;
+      if (external > 85) external = 85;
+      return external;
+    }
+
+    document.getElementById("calcBtn").addEventListener("click", function () {
+      const industry = document.getElementById("industry").value;
+      const qIds = ["q1","q2","q3","q4","q5","q6","q7"];
+      let total = 0;
+
+      for (const id of qIds) {
+        const val = document.getElementById(id).value;
+        if (val === "") {
+          alert("Please answer all questions before calculating.");
+          return;
+        }
+        total += parseInt(val, 10);
+      }
+
+      if (!industry) {
+        alert("Please select an industry.");
+        return;
+      }
+
+      const maxScore = 7 * 5;
+      const selfAiq = Math.round((total / maxScore) * 100);
+      const band = getBand(selfAiq);
+      const benchmark = benchmarks[industry] || 50;
+      const delta = selfAiq - benchmark;
+      const externalAiq = getExternalAiqPlaceholder(industry, selfAiq);
+      const blendedAiq = Math.round((0.6 * selfAiq) + (0.4 * externalAiq));
+
+      document.getElementById("selfAiq").textContent = selfAiq + " / 100";
+      document.getElementById("externalAiq").textContent = externalAiq + " / 100";
+      document.getElementById("blendedAiq").textContent = blendedAiq + " / 100";
+
+      document.getElementById("aiqScore").textContent = "Blended DeltaAIQ: " + blendedAiq + " / 100";
+      document.getElementById("aiqBand").textContent = band;
+      document.getElementById("summaryText").textContent = getBandSummary(band);
+
+      document.getElementById("benchmarkText").textContent = "Typical AIQ in " + industry + ": " + benchmark + " / 100";
+      if (delta > 0) {
+        document.getElementById("deltaText").textContent = "Your self-assessed AIQ is " + delta + " points above the typical organisation in your industry.";
+      } else if (delta < 0) {
+        document.getElementById("deltaText").textContent = "Your self-assessed AIQ is " + Math.abs(delta) + " points below the typical organisation in your industry.";
+      } else {
+        document.getElementById("deltaText").textContent = "Your self-assessed AIQ is in line with the typical organisation in your industry.";
+      }
+
+      document.getElementById("recommendation").textContent = buildRecommendation(selfAiq, delta);
+
+      const insightsUl = document.getElementById("insightsList");
+      insightsUl.innerHTML = "";
+      const bullets = insightsByIndustry[industry] || [
+        "In the last three years, there has been a visible shift towards practical AI adoption rather than experiments alone.",
+        "Competitors are investing in data foundations, cloud platforms and AI skills as non-negotiable capabilities.",
+        "External stakeholders increasingly expect clarity on AI ethics, privacy and responsible use."
+      ];
+      bullets.forEach(text => {
+        const li = document.createElement("li");
+        li.textContent = text;
+        insightsUl.appendChild(li);
+      });
+
+      const resultCardEl = document.getElementById("resultCard");
+      resultCardEl.style.display = "block";
+      resultCardEl.scrollIntoView({ behavior: "smooth" });
+    });
+
+    document.getElementById("startAssessmentBtn").addEventListener("click", function () {
+      document.getElementById("assessmentSection").scrollIntoView({ behavior: "smooth" });
+    });
+  </script>
+</body>
+</html>
