@@ -245,6 +245,50 @@
     .section-anchor {
       scroll-margin-top: 80px;
     }
+
+    /* Autocomplete styles */
+    .autocomplete-wrapper {
+      position: relative;
+    }
+
+    #autocomplete-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+
+    .autocomplete-item {
+      padding: 8px 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 13px;
+    }
+
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+
+    .autocomplete-item:hover {
+      background: #eff6ff;
+    }
+
+    .autocomplete-name {
+      font-weight: 500;
+    }
+
+    .autocomplete-domain {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -281,7 +325,10 @@
         <p class="muted">These inputs help us anchor your AIQ score against the right peer group.</p>
 
         <label for="companyName">Company name</label>
-        <input type="text" id="companyName" placeholder="Example: DeltaAIQ Labs">
+        <div class="autocomplete-wrapper">
+          <input type="text" id="companyName" placeholder="Type company name…" autocomplete="off">
+          <div id="autocomplete-list"></div>
+        </div>
 
         <label for="industry">Industry</label>
         <select id="industry">
@@ -460,12 +507,9 @@
       return "You have a reasonable AI foundation. Use this baseline to align leadership, choose a focused roadmap, and track AIQ every 6–12 months.";
     }
 
-    // Simple external AIQ placeholder builder.
-    // For now, we derive a rough external value from industry benchmark,
-    // just so the UI and narrative are in place.
+    // External AIQ placeholder builder.
     function getExternalAiqPlaceholder(industry, selfAiq) {
       const base = benchmarks[industry] || 50;
-      // Slightly weight towards benchmark but keep within 40–85 band.
       let external = Math.round((base * 0.7) + (selfAiq * 0.3));
       if (external < 40) external = 40;
       if (external > 85) external = 85;
@@ -539,7 +583,12 @@
       const section = document.getElementById("assessmentSection");
       section.scrollIntoView({ behavior: "smooth" });
     });
-  </script>
 
-</body>
-</html>
+    // === Universal company autocomplete using Clearbit ===
+    const companyInput = document.getElementById("companyName");
+    const autocompleteDiv = document.getElementById("autocomplete-list");
+
+    document.addEventListener("click", function (e) {
+      if (!autocompleteDiv.contains(e.target) && e.target !== companyInput) {
+        autocompleteDiv.style.display = "none";
+      }
