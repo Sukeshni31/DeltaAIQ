@@ -49,13 +49,14 @@
       padding: 9px 18px;
       border-radius: 999px;
       border: none;
-      background: var(--primary);
+      background: --primary;
+      background: #2563eb;
       color: #fff;
       font-weight: 600;
       cursor: pointer;
       font-size: 14px;
     }
-    button.primary:hover { background: var(--primary-dark); }
+    button.primary:hover { background: #1d4ed8; }
     .hero-note { font-size: 12px; color: var(--text-muted); }
     .card {
       border: 1px solid var(--border-soft);
@@ -143,7 +144,7 @@
     .autocomplete-name {
       font-weight: 500;
     }
-    .autocomplete-domain {
+    .autocomplete-note {
       font-size: 11px;
       color: var(--text-muted);
     }
@@ -349,9 +350,9 @@
         "Competitors are piloting computer vision, digital twins and scheduling optimisation to reduce downtime and scrap."
       ],
       "Aviation": [
-        "Airlines and MROs have invested in predictive maintenance, fleet health monitoring and turnaround time optimisation using AI.",
-        "Passenger experience is being improved with demand forecasting, personalised offers and disruption management tools.",
-        "Regulatory and safety requirements mean AI adoption is more controlled, but digital programmes are a clear strategic priority."
+        "Aviation and MRO players have accelerated AI use in predictive maintenance, fleet health monitoring and turnaround-time optimisation.",
+        "Global carriers are using AI for dynamic pricing, demand forecasting and disruption management to protect revenue and on-time performance.",
+        "Competitors are investing in passenger-facing AI – personalised offers, chatbots, self-service disruption handling – while tightening safety and regulatory guardrails."
       ],
       "Pharma / Healthcare": [
         "Pharma and health players have expanded AI in drug discovery, trial design, pharmacovigilance and real-world evidence analysis.",
@@ -469,23 +470,23 @@
       document.getElementById("assessmentSection").scrollIntoView({ behavior: "smooth" });
     });
 
-    // === Real-time company suggestions (using Clearbit autocomplete) ===
+    // === OpenAI-powered company directory (frontend client) ===
     const companyInput = document.getElementById("companyName");
     const companyDropdown = document.getElementById("companyDropdown");
     let companyTimer = null;
 
     async function fetchCompanySuggestions(query) {
-      const url = "https://autocomplete.clearbit.com/v1/companies/suggest?query=" + encodeURIComponent(query);
       try {
-        const res = await fetch(url);
+        const res = await fetch("/api/companySearch?q=" + encodeURIComponent(query));
         if (!res.ok) {
           companyDropdown.style.display = "none";
           return;
         }
         const data = await res.json();
-        renderCompanyDropdown(data || []);
+        const companies = Array.isArray(data.companies) ? data.companies : [];
+        renderCompanyDropdown(companies);
       } catch (e) {
-        console.error("Company autocomplete error:", e);
+        console.error("Company search error:", e);
         companyDropdown.style.display = "none";
       }
     }
@@ -504,12 +505,12 @@
         nameDiv.className = "autocomplete-name";
         nameDiv.textContent = c.name || "";
 
-        const domainDiv = document.createElement("div");
-        domainDiv.className = "autocomplete-domain";
-        domainDiv.textContent = c.domain || "";
+        const noteDiv = document.createElement("div");
+        noteDiv.className = "autocomplete-note";
+        noteDiv.textContent = c.note || "";
 
         item.appendChild(nameDiv);
-        item.appendChild(domainDiv);
+        item.appendChild(noteDiv);
 
         item.addEventListener("click", () => {
           companyInput.value = c.name || "";
@@ -532,7 +533,7 @@
 
       companyTimer = setTimeout(() => {
         fetchCompanySuggestions(q);
-      }, 300);
+      }, 350);
     });
 
     document.addEventListener("click", (e) => {
