@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DeltaAIQ – AI Readiness Score</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+      line-height: 1.5;
+    }
+    h1, h2 {
+      margin-bottom: 8px;
+    }
+    .card {
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    label {
+      font-weight: 500;
+      display: block;
+      margin-bottom: 4px;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      font-weight: 600;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    .result {
+      margin-top: 16px;
+    }
+    .score-main {
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid #cbd5f5;
+      background: #eff4ff;
+      color: #1d4ed8;
+      margin-left: 8px;
+    }
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .flex-item {
+      flex: 1 1 200px;
+    }
+    small {
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>DeltaAIQ</h1>
+  <p>Measure your organisation’s AI readiness in a few questions and see how you compare to peers.</p>
+
+  <div class="card">
+    <h2>Organisation details</h2>
+    <label for="companyName">Company name</label>
+    <input type="text" id="companyName" placeholder="Example: DeltaAIQ Labs">
+
+    <label for="industry">Industry</label>
+    <select id="industry">
+      <option value="">Select industry</option>
+      <option>IT Services</option>
+      <option>GCC / Captive</option>
+      <option>SaaS / Product</option>
+      <option>Manufacturing</option>
+      <option>Aviation</option>
+      <option>Pharma / Healthcare</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <h2>AI readiness questions</h2>
+    <p><small>Rate each dimension from 0 (Not at all) to 5 (Very mature).</small></p>
+
+    <label for="q1">1. How clearly defined is your organisation’s AI strategy?</label>
+    <select id="q1">
+      <option value="">Select</option>
+      <option value="0">0 – No strategy</option>
+      <option value="1">1 – Ad-hoc ideas only</option>
+      <option value="2">2 – Draft, not approved</option>
+      <option value="3">3 – Approved for some areas</option>
+      <option value="4">4 – Company-wide with budget</option>
+      <option value="5">5 – With measurable AI KPIs</option>
+    </select>
+
+    <label for="q2">2. Who owns AI and data initiatives?</label>
+    <select id="q2">
+      <option value="">Select</option>
+      <option value="0">0 – No clear owner</option>
+      <option value="1">1 – Informal champion</option>
+      <option value="2">2 – Part-time responsibility</option>
+      <option value="3">3 – Dedicated AI/data lead</option>
+      <option value="4">4 – Formal AI/data office</option>
+      <option value="5">5 – AI CoE with steering group</option>
+    </select>
+
+    <label for="q3">3. How would you rate your data readiness for AI?</label>
+    <select id="q3">
+      <option value="">Select</option>
+      <option value="0">0 – Siloed, poor quality</option>
+      <option value="1">1 – Some access, messy</option>
+      <option value="2">2 – Integrated but inconsistent</option>
+      <option value="3">3 – Reasonable for priority use cases</option>
+      <option value="4">4 – Good governance and access</option>
+      <option value="5">5 – Enterprise-grade platform</option>
+    </select>
+
+    <label for="q4">4. How widely is AI used in core operations or products?</label>
+    <select id="q4">
+      <option value="">Select</option>
+      <option value="0">0 – Not used</option>
+      <option value="1">1 – Experiments in pockets</option>
+      <option value="2">2 – 1–2 pilots in production</option>
+      <option value="3">3 – Used in a few core processes</option>
+      <option value="4">4">4 – Used across many core processes</option>
+      <option value="5">5 – Embedded widely and improved</option>
+    </select>
+
+    <label for="q5">5. What is the level of AI-related skills in your workforce?</label>
+    <select id="q5">
+      <option value="">Select</option>
+      <option value="0">0 – No AI skills internally</option>
+      <option value="1">1 – One or two with exposure</option>
+      <option value="2">2 – Small analytics/ML team</option>
+      <option value="3">3 – Multiple teams with basic skills</option>
+      <option value="4">4 – Structured upskilling programs</option>
+      <option value="5">5 – AI skills embedded across roles</option>
+    </select>
+
+    <label for="q6">6. How mature is your AI technology stack?</label>
+    <select id="q6">
+      <option value="">Select</option>
+      <option value="0">0 – No AI tools or cloud</option>
+      <option value="1">1 – Basic analytics tools only</option>
+      <option value="2">2 – Some cloud/ML tools for pilots</option>
+      <option value="3">3 – Standard tools in some teams</option>
+      <option value="4">4 – Enterprise platforms and MLOps</option>
+      <option value="5">5 – Robust scalable AI platform</option>
+    </select>
+
+    <label for="q7">7. How well are AI risk, ethics and compliance managed?</label>
+    <select id="q7">
+      <option value="">Select</option>
+      <option value="0">0 – Not considered</option>
+      <option value="1">1 – Informal discussions</option>
+      <option value="2">2 – Basic policies, not enforced</option>
+      <option value="3">3 – Some controls in sensitive areas</option>
+      <option value="4">4 – Formal framework in place</option>
+      <option value="5">5 – Regular reviews and guardrails</option>
+    </select>
+
+    <button id="calcBtn">Calculate DeltaAIQ</button>
+  </div>
+
+  <div class="card" id="resultCard" style="display: none;">
+    <h2>Your DeltaAIQ result</h2>
+    <div class="flex-row">
+      <div class="flex-item">
+        <div class="score-main" id="aiqScore"></div>
+        <div id="aiqBand" class="tag"></div>
+        <p id="summaryText"></p>
+      </div>
+      <div class="flex-item">
+        <p><strong>Industry benchmark</strong></p>
+        <p id="benchmarkText"></p>
+        <p id="deltaText"></p>
+      </div>
+    </div>
+    <hr>
+    <p id="recommendation"></p>
+  </div>
+
+  <script>
+    const benchmarks = {
+      "IT Services": 65,
+      "GCC / Captive": 70,
+      "SaaS / Product": 68,
+      "Manufacturing": 45,
+      "Aviation": 55,
+      "Pharma / Healthcare": 50
+    };
+
+    function getBand(aiq) {
+      if (aiq >= 80) return "Leader";
+      if (aiq >= 60) return "Emerging";
+      if (aiq >= 40) return "Developing";
+      return "Early stage";
+    }
+
+    function getBandSummary(band) {
+      if (band === "Leader") {
+        return "You are among the more advanced organisations in using AI across strategy, data, people and governance.";
+      }
+      if (band === "Emerging") {
+        return "You have a visible AI direction and some strong foundations. Focusing on scale and governance will move you into the leader band.";
+      }
+      if (band === "Developing") {
+        return "You have started on the AI journey. Strengthening strategy, data, and a few focused use cases will unlock value.";
+      }
+      return "You are at an early stage of AI adoption. The priority is to clarify strategy, build basic data foundations, and run one or two focused pilots.";
+    }
+
+    function buildRecommendation(aiq, delta) {
+      if (aiq >= 75 && delta >= 0) {
+        return "You are ahead of or in line with peers. Focus on scaling successful AI use cases, formalising governance, and linking AI outcomes to business metrics.";
+      }
+      if (aiq >= 55 && delta < 0) {
+        return "You are on the right path, but slightly behind peers. Clarify accountability for AI, invest in upskilling, and prioritise two or three high-impact AI use cases.";
+      }
+      if (aiq < 55 && delta < 0) {
+        return "You appear behind peers in AI maturity. Start with a clear AI roadmap, data readiness assessment, and one flagship pilot to demonstrate value.";
+      }
+      return "You have a reasonable AI foundation. Use this baseline to align leadership, choose a focused roadmap, and track AIQ every 6–12 months.";
+    }
+
+    document.getElementById("calcBtn").addEventListener("click", function () {
+      const industry = document.getElementById("industry").value;
+      const qIds = ["q1","q2","q3","q4","q5","q6","q7"];
+      let total = 0;
+      for (const id of qIds) {
+        const val = document.getElementById(id).value;
+        if (val === "") {
+          alert("Please answer all questions before calculating.");
+          return;
+        }
+        total += parseInt(val, 10);
+      }
+
+      if (!industry) {
+        alert("Please select an industry.");
+        return;
+      }
+
+      const maxScore = 7 * 5;
+      const aiq = Math.round((total / maxScore) * 100);
+      const band = getBand(aiq);
+      const benchmark = benchmarks[industry] || 50;
+      const delta = aiq - benchmark;
+
+      const aiqScoreEl = document.getElementById("aiqScore");
+      const aiqBandEl = document.getElementById("aiqBand");
+      const benchmarkTextEl = document.getElementById("benchmarkText");
+      const deltaTextEl = document.getElementById("deltaText");
+      const summaryTextEl = document.getElementById("summaryText");
+      const recommendationEl = document.getElementById("recommendation");
+      const resultCardEl = document.getElementById("resultCard");
+
+      aiqScoreEl.textContent = "Your AIQ: " + aiq + " / 100";
+      aiqBandEl.textContent = band;
+
+      benchmarkTextEl.textContent = "Typical AIQ in " + industry + ": " + benchmark + " / 100";
+
+      if (delta > 0) {
+        deltaTextEl.textContent = "You are " + delta + " points above the typical organisation in your industry.";
+      } else if (delta < 0) {
+        deltaTextEl.textContent = "You are " + Math.abs(delta) + " points below the typical organisation in your industry.";
+      } else {
+        deltaTextEl.textContent = "You are exactly in line with the typical organisation in your industry.";
+      }
+
+      summaryTextEl.textContent = getBandSummary(band);
+      recommendationEl.textContent = buildRecommendation(aiq, delta);
+
+      resultCardEl.style.display = "block";
+      resultCardEl.scrollIntoView({ behavior: "smooth" });
+    });
+  </script>
+
+</body>
+</html>
