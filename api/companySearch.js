@@ -1,12 +1,12 @@
 export default async function handler(req, res) {
   const { query } = req.query;
 
-  // If no query, just return empty list
+  // 1) If no query, just return empty list
   if (!query || query.trim() === "") {
     return res.status(200).json({ companies: [] });
   }
 
-  // Check env var
+  // 2) Check env var is present
   if (!process.env.OPENAI_API_KEY) {
     return res.status(500).json({
       companies: [],
@@ -15,6 +15,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    // 3) Call the new Responses API (works with your sk-proj key)
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
@@ -23,19 +24,18 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
-        input: `List 10 companies similar to ${query}. 
-                Return only the company names, one per line, no bullets or numbering.`,
+        input: `List 10 companies similar to ${query}. Return only the company names, one per line, no bullets or numbers.`,
       }),
     });
 
     const data = await response.json();
 
-    // responses API returns a flat output_text string
+    // 4) responses API gives a flat output_text string
     const text = data.output_text || "";
 
     const companies = text
       .split("\n")
-      .map((line) => line.trim().replace(/^\d+\.\s*/, ""))
+      .map((line) => line.trim().replace(/^\d+\.\s*/, "")) // strip "1. "
       .filter((line) => line.length > 0);
 
     return res.status(200).json({ companies });
