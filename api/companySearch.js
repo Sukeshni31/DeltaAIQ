@@ -4,7 +4,6 @@ export default async function handler(req, res) {
   try {
     const q = (req.query.query || "").trim();
 
-    // If no query text, just return empty list
     if (!q) {
       return res.status(200).json({ companies: [] });
     }
@@ -12,36 +11,56 @@ export default async function handler(req, res) {
     if (!process.env.OPENAI_API_KEY) {
       return res.status(500).json({
         companies: [],
-        error: "OPENAI_API_KEY missing in Vercel"
+        error: "OPENAI_API_KEY missing in Vercel",
       });
     }
 
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    // Use the chat/completions endpoint – very stable
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini",
-        input: `List 5 companies that are similar to "${q}". 
-Only return the company names, one per line, no numbering.`
-      })
+        model: "gpt-4.1-mini",        // you can change to "gpt-4o-mini" if needed
+        temperature: 0.3,
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a helpful assistant that suggests similar companies. " +
+              "Only answer with company names, one per line.",
+          },
+          {
+            role: "user",
+            content: `List 5 companies that are similar to "${q}". Only give the names, one per line.`,
+          },
+        ],
+      }),
     });
 
     if (!response.ok) {
-      const text = await response.text();
-      console.error("OpenAI error:", text);
-      return res.status(500).json({ companies: [], error: "OpenAI API error" });
+      // Read the actual error message from OpenAI and send it back
+      let errorText = "OpenAI API error";
+      try {
+        const errJson = await response.json();
+        errorText = errJson?.error?.message || JSON.stringify(errJson);
+        console.error("OpenAI error JSON:", errJson);
+      } catch (_) {
+        const errRaw = await response.text();
+        errorText = errRaw;
+        console.error("OpenAI error text:", errRaw);
+      }
+
+      return res.status(500).json({ companies: [], error: errorText });
     }
 
     const data = await response.json();
 
-    // New Responses API shape: output[0].content[0].text.value
     const rawText =
-      data.output?.[0]?.content?.[0]?.text?.value || "";
+      data.choices?.[0]?.message?.content?.trim() || "";
 
-    // Convert the text into a clean list of company names
     const companies = rawText
       .split("\n")
       .map((c) => c.replace(/^[-•\d.]\s*/, "").trim())
@@ -50,6 +69,8 @@ Only return the company names, one per line, no numbering.`
     return res.status(200).json({ companies });
   } catch (err) {
     console.error("Server error:", err);
-    return res.status(500).json({ companies: [], error: "Server error" });
+    return res
+      .status(500)
+      .json({ companies: [], error: "Server error calling OpenAI" });
   }
 }
