@@ -1,47 +1,10 @@
-export default async function handler(req, res) {
-  const { query } = req.query;
-
-  // If no query, just return empty list
-  if (!query || query.trim() === "") {
-    return res.status(200).json({ companies: [] });
-  }
-
-  // Check env var
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({
-      companies: [],
-      error: "OPENAI_API_KEY missing in Vercel",
-    });
-  }
-  try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        input: `List 10 companies similar to ${query}. Return only the company names, one per line, no bullets or numbers.`,
-      }),
-    });
-
-    const data = await response.json();
-
-    // New OpenAI Responses API format
-    const text = data.output_text || data.output?.[0]?.content || "";
-
-    const companies = text
-      .split("\n")
-      .map((line) => line.trim().replace(/^\d+\.\s*/, ""))
-      .filter((line) => line.length > 0);
-
-    return res.status(200).json({ companies });
-  } catch (err) {
-    console.error("API error:", err);
-    return res.status(500).json({
-      companies: [],
-      error: err.message,
-    });
-  }
+{
+  "name": "deltaaiq",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo \"No build step\""
+  },
+  "dependencies": {}
 }
