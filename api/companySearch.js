@@ -1,51 +1,55 @@
+// api/companySearch.js
+
 export default async function handler(req, res) {
-  const { query } = req.query;
-
-  // If no query, just return empty list
-  if (!query || query.trim() === "") {
-    return res.status(200).json({ companies: [] });
-  }
-
-  // Check env var
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({
-      companies: [],
-      error: "OPENAI_API_KEY missing in Vercel",
-    });
-  }
-
   try {
+    const q = (req.query.query || "").trim();
+
+    // If no query text, just return empty list
+    if (!q) {
+      return res.status(200).json({ companies: [] });
+    }
+
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({
+        companies: [],
+        error: "OPENAI_API_KEY missing in Vercel"
+      });
+    }
+
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        input: `List 10 companies similar to ${query}. Return only the company names, one per line, no bullets or numbers.`,
-      }),
+        model: "gpt-4.1-mini",
+        input: `List 5 companies that are similar to "${q}". 
+Only return the company names, one per line, no numbering.`
+      })
     });
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("OpenAI error:", text);
+      return res.status(500).json({ companies: [], error: "OpenAI API error" });
+    }
 
     const data = await response.json();
 
-    // Safely extract text from Responses API
-    const text =
-      data.output?.[0]?.content?.[0]?.text ||
-      data.output_text ||
-      "";
+    // New Responses API shape: output[0].content[0].text.value
+    const rawText =
+      data.output?.[0]?.content?.[0]?.text?.value || "";
 
-    const companies = text
+    // Convert the text into a clean list of company names
+    const companies = rawText
       .split("\n")
-      .map((line) => line.trim().replace(/^\d+\.\s*/, ""))
-      .filter((line) => line.length > 0);
+      .map((c) => c.replace(/^[-•\d.]\s*/, "").trim())
+      .filter((c) => c.length > 1);
 
     return res.status(200).json({ companies });
   } catch (err) {
-    console.error("API error:", err);
-    return res.status(500).json({
-      companies: [],
-      error: err.message,
-    });
+    console.error("Server error:", err);
+    return res.status(500).json({ companies: [], error: "Server error" });
   }
 }
