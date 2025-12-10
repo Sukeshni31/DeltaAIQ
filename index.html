@@ -1,113 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>DeltaAIQ – Company Search</title>
+  <title>Company Search</title>
   <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 0 16px;
-      line-height: 1.5;
+    body { font-family: Arial; padding: 20px; }
+    #companyDropdown {
+      border: 1px solid #ddd;
+      max-width: 300px;
+      display: none;
+      position: absolute;
+      background: white;
+      z-index: 10;
     }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 8px;
+    .item {
+      padding: 8px;
+      cursor: pointer;
     }
-    label {
-      font-weight: 600;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px 12px;
-      margin-top: 4px;
-      margin-bottom: 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-    .hint {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 12px;
-    }
-    .results {
-      margin-top: 12px;
-      font-size: 15px;
-    }
-    .company {
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .empty {
-      color: #777;
-      margin-top: 8px;
-    }
-    .error {
-      color: #b00020;
-      margin-top: 8px;
+    .item:hover {
+      background: #eee;
     }
   </style>
 </head>
 <body>
-  <h1>DeltaAIQ – Company Search</h1>
-  <p>Type a company name and see similar companies suggested using AI.</p>
 
-  <label for="company-input">Company name</label>
-  <input id="company-input" type="text" placeholder="e.g. Lufthansa, Apple, TCS" />
+<h2>Company Search (Auto Suggestion)</h2>
 
-  <div class="hint">Suggestions will appear below as you type.</div>
+<input type="text" id="companyInput" placeholder="Type a company name" onkeyup="fetchCompanies()">
 
-  <div id="status" class="results"></div>
+<div id="companyDropdown"></div>
 
-  <script>
-    const input = document.getElementById("company-input");
-    const statusDiv = document.getElementById("status");
+<script>
+async function fetchCompanies() {
+  const query = document.getElementById("companyInput").value;
+  const dropdown = document.getElementById("companyDropdown");
 
-    let timeoutId = null;
+  if (query.length < 2) {
+    dropdown.style.display = "none";
+    dropdown.innerHTML = "";
+    return;
+  }
 
-    async function fetchCompanies(query) {
-      if (!query.trim()) {
-        statusDiv.innerHTML = "";
-        return;
-      }
+  const res = await fetch(`/api/companySearch?query=${query}`);
+  const data = await res.json();
 
-      statusDiv.innerHTML = "Loading suggestions…";
+  dropdown.innerHTML = "";
+  data.companies.forEach(c => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.textContent = c;
+    dropdown.appendChild(div);
+  });
 
-      try {
-        const res = await fetch(`/api/companySearch?query=${encodeURIComponent(query)}`);
-        const data = await res.json();
+  dropdown.style.display = "block";
+}
+</script>
 
-        if (data.error) {
-          statusDiv.innerHTML = `<div class="error">Error: ${data.error}</div>`;
-          return;
-        }
-
-        const companies = data.companies || [];
-        if (companies.length === 0) {
-          statusDiv.innerHTML = `<div class="empty">No companies found for this query.</div>`;
-          return;
-        }
-
-        statusDiv.innerHTML =
-          companies
-            .map((c) => `<div class="company">${c}</div>`)
-            .join("");
-      } catch (err) {
-        console.error(err);
-        statusDiv.innerHTML = `<div class="error">Something went wrong. Please try again.</div>`;
-      }
-    }
-
-    input.addEventListener("input", () => {
-      const value = input.value;
-
-      // simple debounce so we don't call API on every keystroke
-      if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fetchCompanies(value), 400);
-    });
-  </script>
 </body>
 </html>
