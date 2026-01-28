@@ -1,72 +1,49 @@
-// api/companySearch.js
+import OpenAI from "openai";
+
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export default async function handler(req, res) {
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Only GET allowed" });
+  }
+
+  const q = String(req.query.q || "").trim();
+  if (q.length < 2) return res.status(200).json({ companies: [] });
+
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ error: "OPENAI_API_KEY missing" });
+  }
+
   try {
-    const q = (req.query.query || "").trim();
+    const prompt = `
+Return up to 8 real company name suggestions for: "${q}"
 
-    // no input → no suggestions
-    if (!q) {
-      return res.status(200).json({ companies: [] });
-    }
+Output ONLY valid JSON exactly:
+{"companies":[{"name":"...","note":"..."}]}
+`;
 
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return res.status(500).json({
-        companies: [],
-        error: "Missing OPENAI_API_KEY"
-      });
-    }
-
-    const payload = {
+    const r = await client.chat.completions.create({
       model: "gpt-4.1-mini",
-      input: `List exactly 5 companies similar to "${q}". 
-Only output the company names, one per line, with no numbering and no extra text.`
-    };
-
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-        "OpenAI-Beta": "response-2024-12-01"
-      },
-      body: JSON.stringify(payload)
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: "Return only valid JSON. No extra text." },
+        { role: "user", content: prompt }
+      ],
+      max_tokens: 250
     });
 
-    const text = await response.text();
-    let data;
+    const text = r.choices?.[0]?.message?.content || "{}";
+    let parsed;
+    try { parsed = JSON.parse(text); } catch { parsed = { companies: [] }; }
 
-    try {
-      data = JSON.parse(text);
-    } catch {
-      console.error("Invalid JSON from OpenAI:", text);
-      return res.status(500).json({
-        companies: [],
-        error: "Invalid JSON from OpenAI"
-      });
-    }
+    const companies = Array.isArray(parsed.companies) ? parsed.companies : [];
+    const clean = companies
+      .filter(c => c && typeof c.name === "string")
+      .slice(0, 8)
+      .map(c => ({ name: c.name.trim(), note: String(c.note || "").trim() }));
 
-    if (!response.ok) {
-      console.error("OpenAI error:", data);
-      return res.status(500).json({
-        companies: [],
-        error: data.error?.message || "OpenAI API error"
-      });
-    }
-
-    const raw =
-      data.output_text ||
-      data.output?.[0]?.content?.[0]?.text?.value ||
-      "";
-
-    const companies = raw
-      .split("\n")
-      .map((c) => c.trim().replace(/^[-•\d.]\s*/, ""))
-      .filter((c) => c);
-
-    return res.status(200).json({ companies });
+    return res.status(200).json({ companies: clean });
   } catch (err) {
-    console.error("Server error:", err);
-    return res.status(500).json({ companies: [], error: "Server error" });
+    return res.status(500).json({ error: "Server error", details: err.message });
   }
 }
