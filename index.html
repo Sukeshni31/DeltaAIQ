@@ -68,47 +68,63 @@
   <div id="status" class="results"></div>
 
   <script>
-    const input = document.getElementById("company-input");
-    const statusDiv = document.getElementById("status");
-    let timeoutId = null;
+  const input = document.getElementById("company-input");
+  const statusDiv = document.getElementById("status");
+  let timeoutId = null;
 
-    async function fetchCompanies(query) {
-      if (!query.trim()) {
-        statusDiv.innerHTML = "";
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[m]));
+  }
+
+  async function fetchCompanies(q) {
+    if (!q.trim()) {
+      statusDiv.innerHTML = "";
+      return;
+    }
+
+    statusDiv.innerHTML = "Loading suggestions...";
+
+    try {
+      // IMPORTANT: use q= (not query=)
+      const res = await fetch(`/api/companySearch?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        statusDiv.innerHTML = `<div class="error">Error: ${escapeHtml(data.error || "Request failed")}</div>`;
         return;
       }
 
-      statusDiv.innerHTML = "Loading suggestions…";
+      const companies = Array.isArray(data.companies) ? data.companies : [];
 
-      try {
-        const res = await fetch(`/api/companySearch?query=${encodeURIComponent(query)}`);
-        const data = await res.json();
-
-        if (data.error) {
-          statusDiv.innerHTML = `<div class="error">Error: ${data.error}</div>`;
-          return;
-        }
-
-        const companies = data.companies || [];
-        if (!companies.length) {
-          statusDiv.innerHTML = `<div class="empty">No companies found for this query.</div>`;
-          return;
-        }
-
-        statusDiv.innerHTML = companies
-          .map((c) => `<div class="company">${c}</div>`)
-          .join("");
-      } catch (err) {
-        console.error(err);
-        statusDiv.innerHTML = `<div class="error">Something went wrong. Please try again.</div>`;
+      if (!companies.length) {
+        statusDiv.innerHTML = `<div class="empty">No companies found.</div>`;
+        return;
       }
-    }
 
-    input.addEventListener("input", () => {
-      const value = input.value;
-      if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fetchCompanies(value), 400);
-    });
-  </script>
+      // IMPORTANT: companies are objects { name, note }
+      statusDiv.innerHTML = companies.map((c) => {
+        const name = escapeHtml(c?.name || "");
+        const note = escapeHtml(c?.note || "");
+        return `
+          <div class="company">
+            <div><strong>${name}</strong></div>
+            ${note ? `<div class="hint">${note}</div>` : ""}
+          </div>
+        `;
+      }).join("");
+    } catch (err) {
+      console.error(err);
+      statusDiv.innerHTML = `<div class="error">Something went wrong. Please try again.</div>`;
+    }
+  }
+
+  input.addEventListener("input", () => {
+    const value = input.value;
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fetchCompanies(value), 350);
+  });
+</script>
 </body>
 </html>
