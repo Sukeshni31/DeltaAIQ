@@ -1,9 +1,9 @@
 {
-  "name": "deltaaiq",
+  "name": "aiqscore",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "build": "echo \"no build step\"",
-    "start": "echo \"static site\""
+  "type": "module",
+  "dependencies": {
+    "openai": "^4.0.0"
   }
 }
